@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPK HOME AUTOMATIONS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .login-container, .control-container {
+            display: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .network-error {
+            color: red;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1></h1>
+        <div class="login-container">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="loginBtn">Login</button>
+            <div id="loginError" class="error"></div>
+        </div>
+        <div class="control-container">
+            <label class="switch">
+                <input type="checkbox" id="ledSwitch">
+                <span class="slider"></span>
+            </label>
+            <div class="status" id="status"></div>
+        </div>
+        <div id="networkError" class="network-error"></div>
+    </div>
+
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+        const loginContainer = document.querySelector('.login-container');
+        const controlContainer = document.querySelector('.control-container');
+        const switchElement = document.getElementById('ledSwitch');
+        const statusElement = document.getElementById('status');
+        const networkError = document.getElementById('networkError');
+
+        loginContainer.style.display = 'block';
+
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            if (username === 'dpk' && password === 'pass') {
+                loginContainer.style.display = 'none';
+                controlContainer.style.display = 'block';
+            } else {
+                loginError.textContent = 'Invalid username or password';
+            }
+        });
+
+        switchElement.addEventListener('change', function() {
+            networkError.textContent = ''; // Clear previous network error
+            const url = switchElement.checked ? 'http://192.168.1.11/ledOn' : 'http://192.168.1.11/ledOff';
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    statusElement.textContent = switchElement.checked ? 'LED is on' : 'LED is off';
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
